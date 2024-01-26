@@ -21,6 +21,9 @@
     display: flex;
     gap: 30px;
 }
+.item img{
+    height: 334px;
+}
 
 @media(max-width:1280px){
     .popular{

@@ -1,14 +1,14 @@
 const port = 4000
-const express = require('express')
-const app = express()
+const express = require('express')// is used to import the Express.js framework. Express.js is a web application framework for Node.js that simplifies the process of building web and mobile applications. It provides a set of features and tools to help with routing, middleware, template engines, and more, making it easier to create server-side applications.
+const app = express()//the express() function is the core function of the Express.js web framework. When you call express(), it creates an instance of an Express application. This application object has methods for handling HTTP requests, defining routes, setting up middleware, and more.
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
-const multer = require('multer') 
-const path = require('path') // using path we can get access to our server directory or express app
+const multer = require('multer') //Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files. NOTE: Multer will not process any form which is not multipart (multipart/form-data).
+const path = require('path') //include the built-in path module. The path module provides a way of working with file and directory paths. It contains methods that allow you to manipulate file paths, such as joining paths, resolving relative paths, extracting directory names,
 const cors = require('cors')
 
-app.use(express.json()) // whatever request we got from response it will automatically convert to json
-app.use(cors())
+app.use(express.json()) // express.json() is a middleware function provided by the Express.js web framework. This middleware is used to parse incoming JSON payloads in the request body. When a client sends a request with a JSON payload (e.g., through a POST or PUT request), express.json() helps to parse that JSON data and make it available in the request.body object.
+app.use(cors())//The cors package is a middleware for Express.js that simplifies the process of handling CORS in your application. app.use(cors()) is used to enable Cross-Origin Resource Sharing (CORS). CORS is a security feature implemented by web browsers to restrict web pages from making requests to a different domain than the one that served the web page. 
 
 //Database connection with mongoDB
 mongoose.connect("mongodb+srv://anitakapal25:dxaYDCMI5d28jZKz@cluster0.pasniow.mongodb.net/ecommerce")
@@ -19,10 +19,11 @@ app.get("/",(req,res)=>{
     res.send("Express App is running")
 })
 
-//Image storage engine
+//to configure the storage engine for handling file uploads to the disk.
 const storage = multer.diskStorage({
     destination: './upload/images',
     filename:(req,file,cb)=>{
+        // Specify the destination folder where the uploaded files will be stored
         return cb(null,`${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)
     }
 })
