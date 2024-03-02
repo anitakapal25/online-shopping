@@ -9,7 +9,7 @@ export const Popular = () => {
   const[popularProducts,setPopularProducts] = useState([])
 
   useEffect(()=>{
-    fetch('https://ecommerce-backend-mauve-mu.vercel.app/popularinwomen')
+    fetch('https://shopper-backend-xgyk.onrender.com/popularinwomen')
     .then((response)=>response.json())
     .then((data)=>setPopularProducts(data))
   },[])

@@ -8,7 +8,7 @@ export const ListProduct = () => {
   const [allProducts,setAllProducts] = useState([])
 
   const fetchInfo = async() =>{
-    await fetch('https://ecommerce-backend-mauve-mu.vercel.app/allproducts')
+    await fetch('https://shopper-backend-xgyk.onrender.com/allproducts')
     .then((res)=>res.json())
     .then((data)=>{setAllProducts(data)})
   }
@@ -18,7 +18,7 @@ export const ListProduct = () => {
   },[])
 
   const remove_product = async(id) =>{
-    await fetch('https://ecommerce-backend-mauve-mu.vercel.app/removeproduct',{
+    await fetch('https://shopper-backend-xgyk.onrender.com/removeproduct',{
       method:'POST',
       headers:{
         Accept:'application/json',

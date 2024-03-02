@@ -26,7 +26,7 @@ export const AddProduct = () => {
         let formData = new FormData();
         formData.append('product',image);
 
-        await fetch('https://ecommerce-backend-mauve-mu.vercel.app/upload',{
+        await fetch('https://shopper-backend-xgyk.onrender.com/upload',{
             method:'POST',
             headers:{
                 Accept:'application/json'
@@ -37,7 +37,7 @@ export const AddProduct = () => {
         if(responseData.success){
             product.image = responseData.image_url
             console.log(product);
-            await fetch('https://ecommerce-backend-mauve-mu.vercel.app/addproduct',{
+            await fetch('https://shopper-backend-xgyk.onrender.com/addproduct',{
                 method:'POST',
                 headers:{
                     Accept:'application/json',
