@@ -1,13 +1,7 @@
-// import axios from 'axios'
-// import ReactDOM from 'react-dom'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas,faCartShopping,faBars } from '@fortawesome/free-solid-svg-icons'
 import { faTwitter, faFontAwesome } from '@fortawesome/free-brands-svg-icons'
 import { faLocationDot,faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-// import './App.css';
-// import Body from './components/Body';
-// import Header from './components/Header';
-// import Footer from './components/Footer';
 import { Navbar } from './components/navbar/Navbar'
 import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import { Shop } from './pages/Shop'

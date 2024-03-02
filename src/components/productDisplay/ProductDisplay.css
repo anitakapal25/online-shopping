@@ -19,7 +19,7 @@
     height: 700px;
 }
 .productdisplay-right{
-    margin: 0px 70px;
+    /* margin: 0px 10px; */
     display: flex;
     flex-direction: column;
 }
