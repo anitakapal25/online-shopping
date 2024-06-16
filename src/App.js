@@ -13,6 +13,7 @@ import {Footer} from './components/footer/Footer'
 import men_banner from './components/assets/banner_mens.png'
 import women_banner from './components/assets/banner_women.png'
 import kid_banner from './components/assets/banner_kids.png'
+import OrderDetails from './components/orders/orderDetails'
 
 library.add(fas, faTwitter, faFontAwesome,faLocationDot,faMagnifyingGlass,faCartShopping,faBars)
 
@@ -38,6 +39,7 @@ function App() {
       </Route>
       <Route path='/cart' element={<Cart/>} />
       <Route path='/login' element={<LoginSignup/>} />
+      <Route path="/order-details" element={<OrderDetails/>} />
     </Routes>
     <Footer/>
     </BrowserRouter>    

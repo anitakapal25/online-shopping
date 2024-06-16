@@ -2,10 +2,107 @@ import React, { useContext } from 'react'
 import './CartItems.css'
 import { ShopContext } from '../../context/ShopContext'
 import remove_icon from '../assets/cart_cross_icon.png'
-
+import { useNavigate } from 'react-router-dom';
 
 export const CartItems = () => {
   const {all_product,cartItems,removeFromCart,getTotalCartAmount} = useContext(ShopContext)
+  const navigate = useNavigate();
+
+  async function handleCheckout() {
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+    
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    try {
+      const items = {       
+        items: all_product.filter(item => cartItems[item.id] > 0).map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.new_price,
+          quantity: cartItems[item.id],
+        }))
+      };
+      const response = await fetch("http://localhost:4000/checkout", { // replace with your server endpoint
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ amount: getTotalCartAmount(),items:items}) // assuming amount is in dollars
+      });
+    //   console.log("response ",response.json());
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const paymentResponse = await response.json();
+      console.log(paymentResponse.data);
+      const { id, currency, amount } = paymentResponse.data;
+
+      const options = {
+        key: "rzp_test_nFmY3sVjJNaLxD", // Replace with your Razorpay Key ID
+        amount: amount,
+        currency: currency,
+        name: "SHOPPER",
+        description: "Test Transaction",
+        order_id: id,
+        handler: function (response) {
+          alert("Payment Successful");
+
+          // Create order details
+          const orderDetails = {
+            id,
+            currency,
+            amount,
+            items: all_product.filter(item => cartItems[item.id] > 0).map(item => ({
+              id: item.id,
+              name: item.name,
+              price: item.new_price,
+              quantity: cartItems[item.id],
+            }))
+          };
+
+          // Redirect to order details page
+          navigate('/order-details', { state: { orderDetails } });
+        },
+        prefill: {
+          name: "Anita Kapal",
+          email: "anita.kapal@gmail.com",
+          contact: "9730119636",
+        },
+        notes: {
+          address: "003, Shradha Sankul, Panvel-410206",
+        },
+        theme: {
+          color: "#F37254",
+        },
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+    } catch (error) {
+      console.error("Checkout failed", error);
+      alert("Checkout failed. Please try again.");
+    }
+  }
+
+    function loadScript(src) {
+        console.log("load razor pay");
+        return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => {
+            resolve(true);
+        };
+        script.onerror = () => {
+        resolve(false);
+        };
+        document.body.appendChild(script);
+        });
+    }
+
   return (
     <div className='cartitems'>
         <div className='cartitems-format-main'>
@@ -23,9 +120,9 @@ export const CartItems = () => {
                 <div  className='cartitems-format cartitems-format-main'>
                     <img src={e.image} alt='' className='carticon-product-icon' />
                     <p>{e.name}</p>
-                    <p>${e.new_price}</p>
+                    <p>Rs. {e.new_price}</p>
                     <button className='cartitems-quantity'>{cartItems[e.id]}</button>
-                    <p>${e.new_price*cartItems[e.id]}</p>
+                    <p>Rs. {e.new_price*cartItems[e.id]}</p>
                     <img className='carticon-remove-icon' src={remove_icon} onClick={()=>{removeFromCart(e.id)}} alt='' />
                 </div>
             </div>
@@ -39,7 +136,7 @@ export const CartItems = () => {
                 <div>
                     <div className='cartitems-total-item'>
                         <p>Subtotal</p>
-                        <p>${getTotalCartAmount()}</p>
+                        <p>Rs. {getTotalCartAmount()}</p>
                     </div>
                     <hr />
                     <div className='cartitems-total-item'>
@@ -49,10 +146,10 @@ export const CartItems = () => {
                     <hr />
                     <div className='cartitems-total-item'>
                         <h3>Total</h3>
-                        <h3>${getTotalCartAmount()}</h3>
+                        <h3>Rs. {getTotalCartAmount()}</h3>
                     </div>
                 </div>
-                <button>PROCEED TO CHECKOUT</button>
+                <button onClick={() => handleCheckout()} target='_blank'>PROCEED TO CHECKOUT</button>
             </div>
             <div className='cartitems-promocode'>
                 <p>If you have a promo code, Enter it here</p>

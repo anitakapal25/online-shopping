@@ -5,13 +5,25 @@ const jwt = require('jsonwebtoken')
 const multer = require('multer') //Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files. NOTE: Multer will not process any form which is not multipart (multipart/form-data).
 const path = require('path') //include the built-in path module. The path module provides a way of working with file and directory paths. It contains methods that allow you to manipulate file paths, such as joining paths, resolving relative paths, extracting directory names,
 const cors = require('cors')
-require("dotenv").config();
+const bodyParser = require('body-parser');
 
+
+const shortid = require("shortid");
+require("dotenv").config();
+app.use(bodyParser.json());
 app.use(express.json()) // express.json() is a middleware function provided by the Express.js web framework. This middleware is used to parse incoming JSON payloads in the request body. When a client sends a request with a JSON payload (e.g., through a POST or PUT request), express.json() helps to parse that JSON data and make it available in the request.body object.
 app.use(cors())//The cors package is a middleware for Express.js that simplifies the process of handling CORS in your application. app.use(cors()) is used to enable Cross-Origin Resource Sharing (CORS). CORS is a security feature implemented by web browsers to restrict web pages from making requests to a different domain than the one that served the web page. 
 
+const Razorpay = require("razorpay");
+
 //Database connection with mongoDB
 mongoose.connect(process.env.URI)
+
+var razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_SECRET_KEY,
+});
+        
 
 //api  creation
 
@@ -240,6 +252,65 @@ app.post('/getcart',fetchUser,async(req,res)=>{
     console.log('get cart')
     let userData = await User.findOne({_id:req.user.id})
     res.json(userData.cartData)
+})
+
+const orderSchema = new mongoose.Schema({
+    razorpay_order_id: String,
+    amount: Number,
+    currency: String,
+    receipt: String,
+    status: String,
+    created_at: { type: Date, default: Date.now }
+  });
+  
+const Order = mongoose.model('Order', orderSchema);
+// Save order details to the database
+
+app.post('/checkout', async (req, res) => {
+    console.log("Checkout params",req.body)
+    const { amount,items } = req.body;
+    const receipt = shortid.generate()
+
+  if (!amount || isNaN(amount)) {
+    return res.status(400).json({
+      message: "Invalid amount",
+    });
+  }
+  console.log(items);
+//   let userData = await User.findOne({_id:req.user.id})
+//     for(let i=0; i<300; i++){
+//         userData.cartData[i] = 0;
+//     }
+   
+  const newOrder = new Order({
+    amount: amount * 100,
+    currency: "INR",
+    receipt: receipt,
+    cartData: items,
+    status: "pending"
+  });
+  
+  await newOrder.save();
+
+  const options = {
+    amount: amount * 100, // amount in the smallest currency unit (e.g., paise for INR)
+    currency: "INR",
+    receipt: receipt,
+  };
+
+  razorpay.orders.create(options, (err, order) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Order creation failed",
+        error: err,
+      });
+    }
+
+    res.status(200).json({
+      message: "Order created",
+      data: newOrder,
+    });
+  });
 })
 
 app.listen(process.env.PORT,(error)=>{
