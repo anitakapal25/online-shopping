@@ -187,11 +187,13 @@ app.post('/login',async(req,res)=>{
     if(user){
         const passCompare = req.body.password === user.password
         if(passCompare){
+            // If the passwords match, prepare a payload for the JWT
             const data={
                 user:{
                     id:user.id
                 }
             }
+            // Sign the JWT with a secret key
             const token = jwt.sign(data,'secret_ecom')
             res.json({success:true,token})
         }else{
@@ -232,7 +234,8 @@ app.post('/addtocart',fetchUser,async(req,res)=>{
     console.log(req.body,req.user);
     let userData = await User.findOne({_id:req.user.id})
     userData.cartData[req.body.itemId] += 1;
-    await User.findOneAndUpdate({_id:req.user.id},{cartData:userData.cartData})
+    const result = await User.findOneAndUpdate({_id:req.user.id},{cartData:userData.cartData})
+    console.log(result);
     res.send("Added")
 })
 
@@ -277,10 +280,6 @@ app.post('/checkout', async (req, res) => {
     });
   }
   console.log(items);
-//   let userData = await User.findOne({_id:req.user.id})
-//     for(let i=0; i<300; i++){
-//         userData.cartData[i] = 0;
-//     }
    
   const newOrder = new Order({
     amount: amount * 100,
@@ -291,7 +290,7 @@ app.post('/checkout', async (req, res) => {
   });
   
   await newOrder.save();
-
+//   await User.findOneAndUpdate({_id:req.user.id},{cartData:[]})
   const options = {
     amount: amount * 100, // amount in the smallest currency unit (e.g., paise for INR)
     currency: "INR",

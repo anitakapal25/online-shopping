@@ -25,14 +25,14 @@ export const CartItems = () => {
           quantity: cartItems[item.id],
         }))
       };
-      const response = await fetch("http://localhost:4000/checkout", { // replace with your server endpoint
+      const response = await fetch(process.env.REACT_APP_API_URL+"/checkout", { // replace with your server endpoint
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ amount: getTotalCartAmount(),items:items}) // assuming amount is in dollars
       });
-    //   console.log("response ",response.json());
+    
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
