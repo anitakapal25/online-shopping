@@ -18,7 +18,7 @@ export const LoginSignup = () => {
   const login = async()=>{
     console.log("Login func",formData)
     let responseData;
-    await fetch(`${process.env.REACT_APP_API_URL}/login`,{
+    await fetch('https://shopper-backend-xgyk.onrender.com/login',{
       method:'POST',
       headers:{
         Accept:'application/json',
@@ -37,7 +37,7 @@ export const LoginSignup = () => {
   const signup = async()=>{
     console.log("signup func",formData)
     let responseData;
-    await fetch(`${process.env.REACT_APP_API_URL}/signup`,{
+    await fetch('https://shopper-backend-xgyk.onrender.com/signup',{
       method:'POST',
       headers:{
         Accept:'application/json',

@@ -17,7 +17,7 @@ const ShopContextProvider = (props) => {
     const [cartItems,setCartItems] = useState(getDefaultCart()) 
     
     useEffect(()=>{
-        fetch(`${process.env.REACT_APP_API_URL}/allproducts`)
+        fetch('https://shopper-backend-xgyk.onrender.com/allproducts')
         .then((response)=>response.json())
         .then((data)=>setAll_Product(data))
 
@@ -42,7 +42,7 @@ const ShopContextProvider = (props) => {
         // setCartItems((prev)=>({...prev,[itemId]: prev[itemId] ? prev[itemId]+1 : 0}))
         // console.log(cartItems);
         if(localStorage.getItem('auth-token')){
-            fetch(`${process.env.REACT_APP_API_URL}/addtocart`,{
+            fetch('https://shopper-backend-xgyk.onrender.com/addtocart',{
                 method:'POST',
                 headers:{
                     Accept:'application/json',
@@ -59,7 +59,7 @@ const ShopContextProvider = (props) => {
     const removeFromCart = (itemId) =>{
         setCartItems((prev)=>({...prev,[itemId]:prev[itemId]-1}))
         if(localStorage.getItem('auth-token')){
-            fetch(`${process.env.REACT_APP_API_URL}/removefromcart`,{
+            fetch('https://shopper-backend-xgyk.onrender.com/removefromcart',{
                 method:'POST',
                 headers:{
                     Accept:'application/json',

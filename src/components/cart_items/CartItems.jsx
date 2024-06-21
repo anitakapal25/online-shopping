@@ -25,7 +25,7 @@ export const CartItems = () => {
           quantity: cartItems[item.id],
         }))
       };
-      const response = await fetch(process.env.REACT_APP_API_URL+"/checkout", { // replace with your server endpoint
+      const response = await fetch("https://shopper-backend-xgyk.onrender.com/checkout", { // replace with your server endpoint
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
